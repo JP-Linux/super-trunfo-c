@@ -1,105 +1,132 @@
 #include <stdio.h>
+#include <string.h> // Para usar a função strcpy()
 
-int main() {
-    //vamos declarar variáveis
-    char estado1, estado2;
-    int numeroCodigo1, numeroCodigo2;
-    char codigo1[10], codigo2[10];
-    char nome1[30], nome2[30];
-    unsigned long int populacao1, populacao2;
-    float area1, area2;
-    float PIB1, PIB2;
-    int pontosTuristicos1, pontosTuristicos2;
-    float densidade1, densidade2;
-    float PIBperCapita1, PIBperCapita2;
-    float superPoder1, superPoder2;
+// struct para reaproveitar as variáveis do jogador1 e do jogador2
+typedef struct {
+    int carta;
+    char estado;
+    int numeroCodigo;
+    char codigo[10];
+    char nome[10];
+    unsigned long int populacao;
+    float area;
+    float PIB;
+    int pontosTuristicos;
+    float densidade;
+    float PIBperCapita;
+    float superPoder;
+} Dados;
 
-
-    //vamos inserir os dados da Carta 1
-    printf("Carta 1:\nDigite Estado (ex: A): ");
-    scanf(" %c", &estado1);
-
-    printf("Digite Código da Carta (número): ");
-    scanf("%d", &numeroCodigo1);
-
-    printf("Digite Nome da Cidade: ");
-    scanf(" %[^\n]", nome1); 
-
-    printf("Digite População: ");
-    scanf("%d", &populacao1);
-
-    printf("Digite Área (em km²): ");
-    scanf("%f", &area1);
-
-    printf("Digite PIB: ");
-    scanf("%f", &PIB1);
-
-    printf("Digite Número de Pontos Turísticos: ");
-    scanf("%d", &pontosTuristicos1);
-
-    //vamos calcular Densidade populacional e PIB per capita em reias Super Poder:
-    densidade1 = (float) populacao1 / area1;
-    PIBperCapita1 = (float) (PIB1 *1000000000)/ populacao1;
-    superPoder1 = (float) (populacao1 + area1 + PIB1 + pontosTuristicos1 + PIBperCapita1 + 1/densidade1);
-
-    //vamos inserir os dados da Carta 2
-    printf("\nCarta 2:\nDigite Estado (ex: A): ");
-    scanf(" %c", &estado2);
+// Função para limpar o buffer de entrada
+void limparBuffer()
+{
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF)
+        ;
+}
+void obterInformacao(Dados* jogador)
+{
+    printf("\nCarta %d:\nDigite Estado (ex: A): ", jogador->carta);
+    scanf("%c", &jogador->estado);
+    limparBuffer();
 
     printf("Digite Código da Carta (número): ");
-    scanf("%d", &numeroCodigo2);
+    scanf("%d", &jogador->numeroCodigo);
+    limparBuffer();
 
     printf("Digite Nome da Cidade: ");
-    scanf(" %[^\n]", nome2);
+    scanf(" %[^\n]", jogador->nome);
+    limparBuffer();
 
     printf("Digite População: ");
-    scanf("%d", &populacao2);
+    scanf("%ld", &jogador->populacao);
+    limparBuffer();
 
     printf("Digite Área (em km²): ");
-    scanf("%f", &area2);
+    scanf("%f", &jogador->area);
+    limparBuffer();
 
     printf("Digite PIB: ");
-    scanf("%f", &PIB2);
+    scanf("%f", &jogador->PIB);
+    limparBuffer();
 
     printf("Digite Número de Pontos Turísticos: ");
-    scanf("%d", &pontosTuristicos2);
+    scanf("%d", &jogador->pontosTuristicos);
+    limparBuffer();
 
-    //vamos calcular Densidade populacional e PIB per capita em reias e Super Poder
-    densidade2 = (float) populacao2 / area2;
-    PIBperCapita2 = (float) (PIB2 *1000000000)/ populacao2;
-    superPoder2 = (float) (populacao2 + area2 + PIB2 + pontosTuristicos2 + PIBperCapita2 + 1/densidade2);
+    // vamos calcular Densidade populacional e PIB per capita em reias Super Poder:
+    jogador->densidade = (float)jogador->populacao / jogador->area;
+    jogador->PIBperCapita = (float)(jogador->PIB * 1000000000) / jogador->populacao;
+    jogador->superPoder = (float)(jogador->populacao + jogador->area + jogador->PIB + jogador->pontosTuristicos + jogador->PIBperCapita + 1 / jogador->densidade);
+}
 
-    //Exibir os Resultados com Comparações
-    printf("População: %s (%lu)\n", (populacao1 > populacao2) ? "Carta 1 venceu" : "Carta 2 venceu", (populacao1 > populacao2) ? 1 : 0);
-    printf("Área: %s (%.0f)\n", (area1 > area2) ? "Carta 1 venceu" : "Carta 2 venceu", (area1 > area2) ? 1 : 0);
-    printf("PIB: %s (%.0f)\n", (PIB1 > PIB2) ? "Carta 1 venceu" : "Carta 2 venceu", (PIB1 > PIB2) ? 1 : 0);
-    printf("Pontos Turísticos: %s (%d)\n", (pontosTuristicos1 > pontosTuristicos2) ? "Carta 1 venceu" : "Carta 2 venceu", (pontosTuristicos1 > pontosTuristicos2) ? 1 : 0);
-    printf("Densidade Populacional: %s (%.0f)\n", (densidade1 < densidade2) ? "Carta 1 venceu" : "Carta 2 venceu", (densidade1 < densidade2) ? 1 : 0);
-    printf("PIB per Capita: %s (%.0f)\n", (PIBperCapita1 > PIBperCapita2) ? "Carta 1 venceu" : "Carta 2 venceu", (PIBperCapita1 > PIBperCapita2) ? 1 : 0);
-    printf("Super Poder: %s (%.0f)\n", (superPoder1 > superPoder2) ? "Carta 1 venceu" : "Carta 2 venceu", (superPoder1 > superPoder2) ? 1 : 0);
-    
+int verificaResultado(int jogador1, int jogador2, char* carta1, char* carta2, char* ptrResultado)
+{
+    /*
+     * Usando o strcpy para copiarmos o segundo parametro para o primeiro
+     * o resultado da condicional vai ser direcionada para o ponteiro resultado (ptrResultado).
+     */
+    strcpy(ptrResultado, (jogador1 > jogador2) ? carta1 : carta2);
 
-    //vamos imprimir os dados da Carta 1
-   /* printf("\nCarta 1:\n");
-    sprintf(codigo1, "%c%02d", estado1, numeroCodigo1);
-    printf("Estado: %c\nCódigo: %s\n", estado1, codigo1);
-    printf("Nome da Cidade: %s\nPopulação: %lu\n", nome1, populacao1);
-    printf("Área: %.2f km²\nPIB: %.2f bilhões de reais\n", area1, PIB1);
-    printf("Número de Pontos Turísticos: %d\n", pontosTuristicos1);
-    printf("Densidade Populacional: %.2f hab/km²\n", densidade1);
-    printf("PIB per Capita: %.2f reais\n\n", PIBperCapita1); */
+    // Aqui irá retornar 1 se for verdadeiro e 0 se for Falso.
+    return (jogador1 > jogador2);
+}
 
+void exibirResultados(Dados* jogador1, Dados* jogador2)
+{
+    char carta1[15] = "Carta 1 venceu";
+    char carta2[15] = "Carta 2 venceu";
 
-    //vamos imprimir os dados da Carta 2
-    /* printf("Carta 2:\n");
-    sprintf(codigo2, "%c%02d", estado2, numeroCodigo2);
-    printf("Estado: %c\nCódigo: %s\n", estado2, codigo2);
-    printf("Nome da Cidade: %s\nPopulação: %lu\n", nome2, populacao2);
-    printf("Área: %.2f km²\nPIB: %.2f bilhões de reais\n", area2, PIB2);
-    printf("Número de Pontos Turísticos: %d\n", pontosTuristicos2);
-    printf("Densidade Populacional: %.2f hab/km²\n", densidade2);
-    printf("PIB per Capita: %.2f reais\n", PIBperCapita2);  */
+    /*
+     * Criando aqui a cadeia de caracteres resultadoCarta, para que o ponteiro (ptrResultado) possa usar
+     * o seu endereço posteriormente, sem o resultadoCarta o valor se perde quando a função verificaResultado encerrar.
+     * a cadeia de caracteres resultadoCarta, vai ser responsável para receber qual carta venceu.
+     */
+    char resultadoCarta[15];
+    char* ptrResultado = resultadoCarta;
+
+    // a variável booleano, é responsável por receber o 0 ou 1 da função verificaResultado.
+    int booleano;
+
+    booleano = verificaResultado(jogador1->populacao, jogador2->populacao, carta1, carta2, ptrResultado);
+    printf("\nPopulação: %s (%d)\n", resultadoCarta, booleano);
+
+    booleano = verificaResultado(jogador1->area, jogador2->area, carta1, carta2, ptrResultado);
+    printf("Área: %s (%d)\n", resultadoCarta, booleano);
+
+    booleano = verificaResultado(jogador1->PIB, jogador2->PIB, carta1, carta2, ptrResultado);
+    printf("PIB: %s (%d)\n", resultadoCarta, booleano);
+
+    booleano = verificaResultado(jogador1->pontosTuristicos, jogador2->pontosTuristicos, carta1, carta2, ptrResultado);
+    printf("Pontos Turísticos: %s (%d)\n", resultadoCarta, booleano);
+
+    booleano = verificaResultado(jogador1->densidade, jogador2->densidade, carta1, carta2, ptrResultado);
+    printf("Densidade Populacional: %s (%d)\n", resultadoCarta, booleano);
+
+    booleano = verificaResultado(jogador1->PIBperCapita, jogador2->PIBperCapita, carta1, carta2, ptrResultado);
+    printf("PIB per Capita: %s (%d)\n", resultadoCarta, booleano);
+
+    booleano = verificaResultado(jogador1->superPoder, jogador2->superPoder, carta1, carta2, ptrResultado);
+    printf("Super Poder: %s (%d)\n", resultadoCarta, booleano);
+}
+
+int main()
+{
+    // Inicializando o struct Dados tudo com 0.
+    Dados jogador1 = { 0 };
+    Dados jogador2 = { 0 };
+
+    // Atribuindo o valor de suas respectivas cartas para o jogador1 e jogador2
+    jogador1.carta = 1;
+    jogador2.carta = 2;
+
+    // Pega as informações do jogador1 e armazena no struct Dados do jogador 1.
+    obterInformacao(&jogador1);
+    // Pega as informações do jogador2 e armazena no struct Dados do jogador 2.
+    obterInformacao(&jogador2);
+
+    // Mandas as informações do jogador1 e do jogador2 para ser verificada as informações e depois exibida;
+    exibirResultados(&jogador1, &jogador2);
 
     return 0;
 }
-
