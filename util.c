@@ -11,8 +11,8 @@ void limparBuffer()
 }
 void obterInformacao(Dados* jogador)
 {
-    printf("\nCarta %d:\nDigite Estado (ex: A): ", jogador->carta);
-    scanf("%c", &jogador->estado);
+    printf("\nCarta %d:\nDigite Estado (ex: BA): ", jogador->carta);
+    scanf("%s", jogador->estado);
     limparBuffer();
 
     printf("Digite Código da Carta (número): ");

@@ -3,7 +3,7 @@
 
 typedef struct {
     int carta;
-    char estado;
+    char estado[3];
     int numeroCodigo;
     char codigo[10];
     char nome[10];
